@@ -1,6 +1,8 @@
 import paho.mqtt.client as mqtt
-import time
 import ast
+import json
+import syslog
+import time
 
 from threading import Thread
 
@@ -97,9 +99,9 @@ try:
 				d['last_publish'] = int(time.time())
 
 				topic = MqttConfig.server_topic + d['sensor'] + '/' + d['name']
-				msg = str(d['values'])
+				msg = json.dumps(d['values'])
 
-				print(topic + ' == ' + msg)
+				syslog.syslog(syslog.LOG_NOTICE, topic + ' == ' + msg)
 				client.publish(topic, payload=msg, qos=1)
 
 		time.sleep(1)
