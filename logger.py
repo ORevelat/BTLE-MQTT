@@ -1,3 +1,4 @@
+import syslog
 
 debug = False
 
@@ -11,4 +12,5 @@ class Logger():
 	@staticmethod
 	def error(msg):
 		print('ERROR - ' + msg)
+		syslog.syslog(syslog.LOG_ERR, msg)
 
