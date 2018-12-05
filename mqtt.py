@@ -36,6 +36,12 @@ def mqtt_on_message(client, userdata, message):
 def mqtt_on_log(client, userdata, level, buf):
     logger.debug("mqtt_on_log: " + buf)
 
+def mqtt_on_connect(client, userdata, falgs, rc):
+	if rc is not 0:
+		syslog.syslog(syslog.LOG_CRIT, 'mqtt_on_connect error rc=' + str(rc))
+	else:
+		mqtt_listeners()
+
 ## perform reading of sensor information once
 def btle_connect(device):
 	if device is None:
@@ -69,11 +75,10 @@ client = mqtt.Client("hass-ble-client1")
 client.username_pw_set(MqttConfig.user_name, MqttConfig.user_pwd)
 
 client.on_message = mqtt_on_message
+client.on_connect = mqtt_on_connect
 
 client.connect(MqttConfig.server_addr, MqttConfig.server_port)
 client.loop_start()
-
-mqtt_listeners()
 
 ## main loop to get btle sensor information
 try:
